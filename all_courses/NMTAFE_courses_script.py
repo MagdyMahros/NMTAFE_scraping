@@ -30,8 +30,8 @@ course_data = {'Level_Code': '', 'University': 'North Metropolitan TAFE', 'City'
                'Duration': '', 'Duration_Time': '', 'Full_Time': 'yes', 'Part_Time': 'yes', 'Prerequisite_1': '',
                'Prerequisite_2': '', 'Prerequisite_3': '', 'Prerequisite_1_grade': '', 'Prerequisite_2_grade': '',
                'Prerequisite_3_grade': '', 'Website': '', 'Course_Lang': '', 'Availability': '', 'Description': '',
-               'Career_Outcomes': '', 'Online': '', 'Offline': '', 'Distance': '', 'Face_to_Face': '',
-               'Blended': '', 'Course_delivery_mode': '', 'Free_TAFE': '', 'Remarks': ''}
+               'Career_Outcomes': '', 'Online': '', 'Offline': '', 'Distance': 'no', 'Face_to_Face': '',
+               'Blended': 'no', 'Course_delivery_mode': '', 'Free_TAFE': '', 'Remarks': ''}
 
 possible_cities = {'canberra': 'Canberra', 'bruce': 'Bruce', 'mumbai': 'Mumbai', 'melbourne': 'Melbourne',
                    'brisbane': 'Brisbane', 'sydney': 'Sydney', 'queensland': 'Queensland', 'ningbo': 'Ningbo',
@@ -263,3 +263,15 @@ for each_url in course_links_file:
     print('COURSE DELIVERY MODE: ', course_data['Course_delivery_mode'])
     print('DELIVERY: online: ' + course_data['Online'] + ' offline: ' + course_data['Offline'] + ' face to face: ' +
           course_data['Face_to_Face'] + ' blended: ' + course_data['Blended'] + ' distance: ' + course_data['Distance'])
+
+    # CAREER OUTCOMES
+    career_tag = soup.find_all('div', class_='c-job-opportunities-option')
+    if career_tag:
+        career_list = []
+        for a in career_tag:
+            career_a = a.find('a')
+            if career_a:
+                career_list.append(career_a.get_text().strip())
+        career_list = ' | '.join(career_list)
+        course_data['Career_Outcomes'] = career_list
+    print('CAREER OUTCOMES: ', course_data['Career_Outcomes'])
