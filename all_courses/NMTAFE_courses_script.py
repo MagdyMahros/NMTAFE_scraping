@@ -119,12 +119,11 @@ for each_url in course_links_file:
                         course_data['Prerequisite_1'] = 'year 9'
                     else:
                         course_data['Prerequisite_1'] = non_school_leaver.get_text()
-                    print('PREREQUISITE 1: ', course_data['Prerequisite_1'])
                     n_grade = re.search(r'\d+', non_school_leaver.get_text())
-                    if 'Band' in non_school_leaver.get_text() and n_grade is not None:
-                        course_data['Prerequisite_1_grade'] = n_grade.group()
-                    elif 'C Grades' in non_school_leaver.get_text():
+                    if 'C Grades' in non_school_leaver.get_text():
                         course_data['Prerequisite_1_grade'] = 'C Grades'
+                    elif 'Band' in non_school_leaver.get_text() and n_grade is not None:
+                        course_data['Prerequisite_1_grade'] = n_grade.group()
                 if school_leaver[1]:
                     if 'Year 10' in school_leaver[1].get_text():
                         course_data['Prerequisite_2'] = 'year 10'
@@ -134,11 +133,18 @@ for each_url in course_links_file:
                         course_data['Prerequisite_2'] = 'year 9'
                     else:
                         course_data['Prerequisite_2'] = school_leaver[1].get_text()
-                    print('PREREQUISITE 2: ', course_data['Prerequisite_2'])
                     s_grade = re.search(r'\d+', school_leaver[1].get_text())
-                    if 'Band' in school_leaver[1].get_text() and s_grade is not None:
-                        course_data['Prerequisite_2_grade'] = s_grade.group()
-                    elif 'C Grades' in school_leaver[1].get_text():
+                    if 'C Grades' in school_leaver[1].get_text():
                         course_data['Prerequisite_2_grade'] = 'C Grades'
-                print('PRE-1-GRADE: ', str(course_data['Prerequisite_1_grade']))
-                print('PRE-2-GRADE: ', str(course_data['Prerequisite_2_grade']))
+                    elif 'Band' in school_leaver[1].get_text() and s_grade is not None:
+                        course_data['Prerequisite_2_grade'] = s_grade.group()
+    else:
+        course_data['Prerequisite_1'] = 'Not mentioned'
+        course_data['Prerequisite_2'] = 'Not mentioned'
+        course_data['Prerequisite_1_grade'] = 'Not mentioned'
+        course_data['Prerequisite_2_grade'] = 'Not mentioned'
+    print('PREREQUISITE 1: ', course_data['Prerequisite_1'])
+    print('PREREQUISITE 2: ', course_data['Prerequisite_2'])
+    print('PRE-1-GRADE: ', str(course_data['Prerequisite_1_grade']))
+    print('PRE-2-GRADE: ', str(course_data['Prerequisite_2_grade']))
+
