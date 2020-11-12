@@ -202,3 +202,23 @@ for each_url in course_links_file:
                 if 'online' in city_text:
                     actual_cities.append('online')
         print('CITY: ', actual_cities)
+
+    # DURATION
+    duration_tag = soup.find('td', class_='c-course-duration-icon', text=re.compile('duration', re.IGNORECASE))
+    if duration_tag:
+        duration = duration_tag.find_next_sibling('td')
+        if duration:
+            converted_dura = dura.convert_duration(duration.get_text().strip())
+            if converted_dura is not None:
+                duration_list = list(converted_dura)
+                if duration_list[0] == 1 and 'Years' in duration_list[1]:
+                    duration_list[1] = 'Year'
+                if duration_list[0] == 1 and 'Months' in duration_list[1]:
+                    duration_list[1] = 'Month'
+                if duration_list[0] == 1 and 'Weeks' in duration_list[1]:
+                    duration_list[1] = 'Week'
+                course_data['Duration'] = duration_list[0]
+                course_data['Duration_Time'] = duration_list[1]
+                print('Duration: ', str(duration_list[0]) + ' / ' + duration_list[1])
+
+
