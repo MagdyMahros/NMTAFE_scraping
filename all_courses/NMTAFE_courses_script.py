@@ -148,3 +148,28 @@ for each_url in course_links_file:
     print('PRE-1-GRADE: ', str(course_data['Prerequisite_1_grade']))
     print('PRE-2-GRADE: ', str(course_data['Prerequisite_2_grade']))
 
+    # FEES
+    fees_container = soup.find('div', class_='field field-name-field-fee-table field-type-text-long field-label-hidden')
+    course_data['Local_Fees'] = ''
+    if fees_container:
+        fee_table = fees_container.find('table')
+        if fee_table:
+            t_body = fee_table.find('tbody')
+            if t_body:
+                tr = t_body.find_all('tr')
+                if tr:
+                    fee_td = tr[1].find_all('td')
+                    if fee_td:
+                        fee = fee_td[0].get_text()
+                        fee_n = re.search(r"\d+(?:.\d+)|\d+", fee)
+                        if fee_n is not None:
+                            course_data['Local_Fees'] = fee_n.group()
+                            print('fee: ', fee_n.group())
+                        elif 'Tuition fee' in fee.strip():
+                            fee_td_1 = tr[2].find_all('td')
+                            if fee_td_1:
+                                fee_1 = fee_td_1[0].get_text()
+                                fee_n_1 = re.search(r"\d+(?:.\d+)|\d+", fee_1)
+                                if fee_n_1 is not None:
+                                    course_data['Local_Fees'] = fee_n_1.group()
+                                    print('fee 1: ', fee_n_1.group())
