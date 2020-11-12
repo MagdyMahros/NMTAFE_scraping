@@ -221,4 +221,45 @@ for each_url in course_links_file:
                 course_data['Duration_Time'] = duration_list[1]
                 print('Duration: ', str(duration_list[0]) + ' / ' + duration_list[1])
 
-
+    # COURSE DELIVERY
+    ave_list = soup.find_all('a', class_="availability-title accordion-heading")
+    if ave_list:
+        delivery_mode_list = []
+        course_data['Course_delivery_mode'] = ''
+        for a in ave_list:
+            delivery_text = a.get_text().strip().lower()
+            if 'traineeship' in delivery_text:
+                delivery_mode_list.append('Traineeship')
+            if 'apprenticeship' in delivery_text:
+                delivery_mode_list.append('Apprenticeship')
+            if 'employer-based' in delivery_text:
+                delivery_mode_list.append('Employer-based')
+            if 'on campus' in delivery_text:
+                delivery_mode_list.append('Normal')
+                course_data['Offline'] = 'yes'
+                course_data['Face_to_Face'] = 'yes'
+            else:
+                course_data['Offline'] = 'no'
+                course_data['Face_to_Face'] = 'no'
+            if 'online' in delivery_text:
+                course_data['Online'] = 'yes'
+                delivery_mode_list.append('Online')
+            else:
+                course_data['Online'] = 'no'
+        delivery_mode_list = ' '.join(delivery_mode_list)
+        mode_list = []
+        if 'Traineeship' in delivery_mode_list:
+            mode_list.append('Traineeship')
+        if 'Apprenticeship' in delivery_mode_list:
+            mode_list.append('Apprenticeship')
+        if 'Employer-based' in delivery_mode_list:
+            mode_list.append('Employer-based')
+        if 'Normal' in delivery_mode_list:
+            mode_list.append('Normal')
+        if 'Online' in delivery_mode_list:
+            mode_list.append('Online')
+        mode_list = ' / '.join(mode_list)
+        course_data['Course_delivery_mode'] = mode_list
+    print('COURSE DELIVERY MODE: ', course_data['Course_delivery_mode'])
+    print('DELIVERY: online: ' + course_data['Online'] + ' offline: ' + course_data['Offline'] + ' face to face: ' +
+          course_data['Face_to_Face'] + ' blended: ' + course_data['Blended'] + ' distance: ' + course_data['Distance'])
