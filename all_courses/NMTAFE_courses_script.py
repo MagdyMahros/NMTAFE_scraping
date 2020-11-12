@@ -29,16 +29,16 @@ course_data = {'Level_Code': '', 'University': 'North Metropolitan TAFE', 'City'
                'Course': '', 'Int_Fees': '', 'Local_Fees': '', 'Currency': 'AUD', 'Currency_Time': 'year',
                'Duration': '', 'Duration_Time': '', 'Full_Time': 'yes', 'Part_Time': 'yes', 'Prerequisite_1': '',
                'Prerequisite_2': '', 'Prerequisite_3': '', 'Prerequisite_1_grade': '', 'Prerequisite_2_grade': '',
-               'Prerequisite_3_grade': '', 'Website': '', 'Course_Lang': '', 'Availability': '', 'Description': '',
+               'Prerequisite_3_grade': '', 'Website': '', 'Course_Lang': '', 'Availability': 'D', 'Description': '',
                'Career_Outcomes': '', 'Online': '', 'Offline': '', 'Distance': 'no', 'Face_to_Face': '',
-               'Blended': 'no', 'Course_delivery_mode': '', 'Free_TAFE': '', 'Remarks': ''}
+               'Blended': 'no', 'Course_delivery_mode': '', 'Free_TAFE': 'no', 'Remarks': ''}
 
 possible_cities = {'canberra': 'Canberra', 'bruce': 'Bruce', 'mumbai': 'Mumbai', 'melbourne': 'Melbourne',
                    'brisbane': 'Brisbane', 'sydney': 'Sydney', 'queensland': 'Queensland', 'ningbo': 'Ningbo',
                    'shanghai': 'Shanghai', 'bhutan': 'Bhutan', 'online': 'Online', 'hangzhou': 'Hangzhou',
                    'hanoi': 'Hanoi', 'bundoora': 'Bundoora', 'brunswick': 'Brunswick', 'bendigo': 'Victoria',
                    'balga': 'Balga', 'clarkson': 'Clarkson', 'joondalup': 'Joondalup', 'leederville': 'Leederville',
-                   'midland': 'Midland', 'mount lawley': 'Mount Lawley', 'nedlands': 'Nedlands'}
+                   'midland': 'Midland', 'mount lawley': 'Mount Lawley', 'nedlands': 'Nedlands', 'perth': 'Perth'}
 
 possible_languages = {'Japanese': 'Japanese', 'French': 'French', 'Italian': 'Italian', 'Korean': 'Korean',
                       'Indonesian': 'Indonesian', 'Chinese': 'Chinese', 'Spanish': 'Spanish'}
@@ -275,3 +275,33 @@ for each_url in course_links_file:
         career_list = ' | '.join(career_list)
         course_data['Career_Outcomes'] = career_list
     print('CAREER OUTCOMES: ', course_data['Career_Outcomes'])
+
+    # duplicating entries with multiple cities for each city
+    for i in actual_cities:
+        course_data['City'] = possible_cities[i]
+        course_data_all.append(copy.deepcopy(course_data))
+    del actual_cities
+
+    # TABULATE THE DATA
+    desired_order_list = ['Level_Code', 'University', 'City', 'Course', 'Faculty', 'Int_Fees', 'Local_Fees',
+                          'Currency', 'Currency_Time', 'Duration', 'Duration_Time', 'Full_Time', 'Part_Time',
+                          'Prerequisite_1', 'Prerequisite_2', 'Prerequisite_3', 'Prerequisite_1_grade',
+                          'Prerequisite_2_grade', 'Prerequisite_3_grade', 'Website', 'Course_Lang', 'Availability',
+                          'Description', 'Career_Outcomes', 'Country', 'Online', 'Offline', 'Distance', 'Face_to_Face',
+                          'Blended', 'Course_delivery_mode', 'Free_TAFE', 'Remarks']
+
+    course_dict_keys = set().union(*(d.keys() for d in course_data_all))
+
+    with open(csv_file, 'w', encoding='utf-8', newline='') as output_file:
+        dict_writer = csv.DictWriter(output_file, course_dict_keys)
+        dict_writer.writeheader()
+        dict_writer.writerows(course_data_all)
+
+    with open(csv_file, 'r', encoding='utf-8') as infile, open('NMTAFE_courses_ordered.csv', 'w', encoding='utf-8',
+                                                               newline='') as outfile:
+        writer = csv.DictWriter(outfile, fieldnames=desired_order_list)
+        # reorder the header first
+        writer.writeheader()
+        for row in csv.DictReader(infile):
+            # writes the reordered rows to the new file
+            writer.writerow(row)
