@@ -31,7 +31,7 @@ course_data = {'Level_Code': '', 'University': 'North Metropolitan TAFE', 'City'
                'Prerequisite_2': '', 'Prerequisite_3': '', 'Prerequisite_1_grade': '', 'Prerequisite_2_grade': '',
                'Prerequisite_3_grade': '', 'Website': '', 'Course_Lang': '', 'Availability': '', 'Description': '',
                'Career_Outcomes': '', 'Online': '', 'Offline': '', 'Distance': '', 'Face_to_Face': '',
-               'Blended': '', 'Remarks': ''}
+               'Blended': '', 'Course_delivery_mode': '', 'Free_TAFE': '', 'Remarks': ''}
 
 possible_cities = {'canberra': 'Canberra', 'bruce': 'Bruce', 'mumbai': 'Mumbai', 'melbourne': 'Melbourne',
                    'brisbane': 'Brisbane', 'sydney': 'Sydney', 'queensland': 'Queensland', 'ningbo': 'Ningbo',
@@ -101,3 +101,44 @@ for each_url in course_links_file:
             course_data['Description'] = desc_list
             print('COURSE DESCRIPTION: ', desc_list)
 
+    # PREREQUISITES
+    prerequisite_table = soup.find('table', class_='entrance_requirement')
+    if prerequisite_table:
+        t_body = prerequisite_table.find_all('tbody')
+        if t_body[1]:
+            tr = t_body[1].find('tr')
+            if tr:
+                non_school_leaver = tr.find('td')
+                school_leaver = tr.find_all('td')
+                if non_school_leaver:
+                    if 'Year 10' in non_school_leaver.get_text():
+                        course_data['Prerequisite_1'] = 'year 10'
+                    elif 'Year 11' in non_school_leaver.get_text():
+                        course_data['Prerequisite_1'] = 'year 11'
+                    elif 'Year 9' in non_school_leaver.get_text():
+                        course_data['Prerequisite_1'] = 'year 9'
+                    else:
+                        course_data['Prerequisite_1'] = non_school_leaver.get_text()
+                    print('PREREQUISITE 1: ', course_data['Prerequisite_1'])
+                    n_grade = re.search(r'\d+', non_school_leaver.get_text())
+                    if 'Band' in non_school_leaver.get_text() and n_grade is not None:
+                        course_data['Prerequisite_1_grade'] = n_grade.group()
+                    elif 'C Grades' in non_school_leaver.get_text():
+                        course_data['Prerequisite_1_grade'] = 'C Grades'
+                if school_leaver[1]:
+                    if 'Year 10' in school_leaver[1].get_text():
+                        course_data['Prerequisite_2'] = 'year 10'
+                    elif 'Year 11' in school_leaver[1].get_text():
+                        course_data['Prerequisite_2'] = 'year 11'
+                    elif 'Year 9' in school_leaver[1].get_text():
+                        course_data['Prerequisite_2'] = 'year 9'
+                    else:
+                        course_data['Prerequisite_2'] = school_leaver[1].get_text()
+                    print('PREREQUISITE 2: ', course_data['Prerequisite_2'])
+                    s_grade = re.search(r'\d+', school_leaver[1].get_text())
+                    if 'Band' in school_leaver[1].get_text() and s_grade is not None:
+                        course_data['Prerequisite_2_grade'] = s_grade.group()
+                    elif 'C Grades' in school_leaver[1].get_text():
+                        course_data['Prerequisite_2_grade'] = 'C Grades'
+                print('PRE-1-GRADE: ', str(course_data['Prerequisite_1_grade']))
+                print('PRE-2-GRADE: ', str(course_data['Prerequisite_2_grade']))
