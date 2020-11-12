@@ -36,7 +36,9 @@ course_data = {'Level_Code': '', 'University': 'North Metropolitan TAFE', 'City'
 possible_cities = {'canberra': 'Canberra', 'bruce': 'Bruce', 'mumbai': 'Mumbai', 'melbourne': 'Melbourne',
                    'brisbane': 'Brisbane', 'sydney': 'Sydney', 'queensland': 'Queensland', 'ningbo': 'Ningbo',
                    'shanghai': 'Shanghai', 'bhutan': 'Bhutan', 'online': 'Online', 'hangzhou': 'Hangzhou',
-                   'hanoi': 'Hanoi', 'bundoora': 'Bundoora', 'brunswick': 'Brunswick', 'bendigo': 'Victoria'}
+                   'hanoi': 'Hanoi', 'bundoora': 'Bundoora', 'brunswick': 'Brunswick', 'bendigo': 'Victoria',
+                   'balga': 'Balga', 'clarkson': 'Clarkson', 'joondalup': 'Joondalup', 'leederville': 'Leederville',
+                   'midland': 'Midland', 'mount lawley': 'Mount Lawley', 'nedlands': 'Nedlands'}
 
 possible_languages = {'Japanese': 'Japanese', 'French': 'French', 'Italian': 'Italian', 'Korean': 'Korean',
                       'Indonesian': 'Indonesian', 'Chinese': 'Chinese', 'Spanish': 'Spanish'}
@@ -173,3 +175,30 @@ for each_url in course_links_file:
                                 if fee_n_1 is not None:
                                     course_data['Local_Fees'] = fee_n_1.group()
                                     print('fee 1: ', fee_n_1.group())
+
+    # CITY
+    city_tag = soup.find_all('td', class_='c-course-where-icon', text=re.compile('where', re.IGNORECASE))
+    if city_tag:
+        for city in city_tag:
+            city_ = city.find_next_sibling('td')
+            if city_:
+                city_text = city_.get_text().strip().lower()
+                if 'nedlands' in city_text:
+                    actual_cities.append('nedlands')
+                if 'perth' in city_text:
+                    actual_cities.append('perth')
+                if 'balga' in city_text:
+                    actual_cities.append('balga')
+                if 'clarkson' in city_text:
+                    actual_cities.append('clarkson')
+                if 'joondalup' in city_text:
+                    actual_cities.append('joondalup')
+                if 'leederville' in city_text:
+                    actual_cities.append('leederville')
+                if 'midland' in city_text:
+                    actual_cities.append('midland')
+                if 'mount lawley' in city_text:
+                    actual_cities.append('mount lawley')
+                if 'online' in city_text:
+                    actual_cities.append('online')
+        print('CITY: ', actual_cities)
